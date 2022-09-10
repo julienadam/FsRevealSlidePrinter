@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FsRevealSlidePrinter": {
+      "commandName": "Project",
+      "commandLineArgs": "--working-directory C:\\Users\\Arcodia\\CloudStation\\Formation\\Docker"
+    }
+  }
+}
