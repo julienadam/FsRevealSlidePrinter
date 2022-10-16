@@ -22,6 +22,8 @@ type Arguments =
 let parser = ArgumentParser.Create<Arguments>(programName = "FsRevealSlidePrinter.exe")
 let args = parser.ParseCommandLine()
 
+
+
 let print (driver:WebDriver) url outputFile =
     
     printfn "Navigating Firefox to %s" url
@@ -48,7 +50,16 @@ let print (driver:WebDriver) url outputFile =
         printfn "Page load timed out."
 
 let workdir = args.GetResult(Working_Directory)
+
+if System.IO.Directory.Exists(workdir) |> not then
+    printfn "Working directory %s does not exist" workdir
+    System.Environment.Exit(-1)
+
 let outdir = args.GetResult(Output_Directory, System.Environment.CurrentDirectory)
+if System.IO.Directory.Exists(outdir) |> not then
+    printfn "Creating missing output directory %s" outdir
+    System.IO.Directory.CreateDirectory(outdir) |> ignore
+
 let mutable baseUrl = args.GetResult(URL,  "http://127.0.0.1:8083/")
 // Quick fix for missing slash in base URL, would be better to use an actual URL builder
 if not (baseUrl.EndsWith("/")) then
