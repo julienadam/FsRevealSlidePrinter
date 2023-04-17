@@ -22,8 +22,6 @@ type Arguments =
 let parser = ArgumentParser.Create<Arguments>(programName = "FsRevealSlidePrinter.exe")
 let args = parser.ParseCommandLine()
 
-
-
 let print (driver:WebDriver) url outputFile =
     
     printfn "Navigating Firefox to %s" url
@@ -34,14 +32,17 @@ let print (driver:WebDriver) url outputFile =
     let wait = new WebDriverWait(driver, System.TimeSpan.FromMinutes(1));
     let sw = Stopwatch.StartNew()
     let result = wait.Until(fun d -> d.FindElement(By.TagName("body")).GetAttribute("class") = "print-pdf")
+    printfn "Waited %A for page to load" sw.Elapsed
+    printfn "Wait 3 more seconds to be sure all plugins have finished loading"
+    let waitMore = System.TimeSpan.FromSeconds(3)
+    System.Threading.Thread.Sleep(waitMore)
 
     if result then
-        printfn "Waited %A for page to load" sw.Elapsed
         let printOptions = new PrintOptions()
         printOptions.Orientation <- PrintOrientation.Landscape
         // Hardcoded A4 landscape paper size
-        printOptions.PageDimensions.Height <- 21.0
-        printOptions.PageDimensions.Width <- 29.7
+        printOptions.PageDimensions.Height <- 29.7
+        printOptions.PageDimensions.Width <- 21.0
         printfn "Printing file"
         let doc = driver.Print(printOptions)
         printfn "Saving file to %s" outputFile
